@@ -11,6 +11,7 @@ Date: 2023/6/19
 global.DEBUG = true;
 
 const fs = require("fs");
+const { initializeApp } = require("./initialize.js");
 
 const myArgs = process.argv.slice(2);
 if (DEBUG) if (myArgs.length >= 1) console.log("myApp.args:", myArgs);
@@ -19,7 +20,7 @@ switch (myArgs[0]) {
   case "init":
   case "i":
     if (DEBUG) console.log(myArgs[0], "-initialize app.");
-    // initializeApp();
+    initializeApp();
     break;
   case "config":
   case "c":
@@ -40,4 +41,3 @@ switch (myArgs[0]) {
       console.log(data.toString());
     });
 }
-
