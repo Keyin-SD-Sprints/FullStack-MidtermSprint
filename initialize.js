@@ -11,21 +11,32 @@ date: 2023/06/19
 
 */
 const fs = require("fs");
+const Logger = require("./logger");
+
+const lg = new Logger();
+lg.listen();
 
 const myArgs = process.argv.slice(2);
-
+const myArg = myArgs[1];
 function initializeApp() {
   if (DEBUG) console.log("-initializeApp() running...");
-
-  switch (myArgs[1]) {
+  lg.emit("log", "initializeApp()", "INFO", "initialize app **test log.");
+  switch (myArg) {
     case "--all":
-      if (DEBUG) console.log(myArgs[1], "-creating files and folders");
+      if (DEBUG) console.log(myArg, "-creating files and folders");
+      createFolders();
+      createFiles();
       break;
     case "--mk":
-      if (DEBUG) console.log(myArgs[1], "-creating all folders");
+      if (DEBUG) console.log(myArg, "-creating all folders");
+      createFolders();
       break;
     case "--cat":
-      if (DEBUG) console.log(myArgs[1], "-creating all files");
+      if (DEBUG)
+        console.log(
+          myArg,
+          "-creating default config file and the help help files"
+        );
       break;
     case "--help":
     case "--h":
@@ -35,6 +46,14 @@ function initializeApp() {
         console.log(data.toString());
       });
   }
+}
+
+function createFolders() {
+  if (DEBUG) console.log("createFolders()");
+}
+
+function createFiles() {
+  if (DEBUG) console.log("createFiles()");
 }
 
 module.exports = {
