@@ -14,27 +14,28 @@ const fs = require("fs");
 const { initializeApp } = require("./initialize.js");
 
 const myArgs = process.argv.slice(2);
-if (DEBUG) if (myArgs.length >= 1) console.log("myApp.args:", myArgs);
+const myArg = myArgs[0];
+if (DEBUG) if (myArgs.length >= 1) console.log("myapp.args:", myArgs);
 
-switch (myArgs[0]) {
+switch (myArg) {
   case "init":
   case "i":
-    if (DEBUG) console.log(myArgs[0], "-initialize app.");
+    if (DEBUG) console.log(myArg, "-initialize app.");
     initializeApp();
     break;
   case "config":
   case "c":
-    if (DEBUG) console.log(myArgs[0], "-display config file.");
+    if (DEBUG) console.log(myArg, "-display config file.");
     // configApp();
     break;
   case "token":
   case "t":
-    if (DEBUG) console.log(myArgs[0], "-generate user token.");
+    if (DEBUG) console.log(myArg, "-generate user token.");
     // tokenApp();
     break;
   case "--help":
   case "--h":
-    if (DEBUG) console.log(myArgs[0], "-help (command).");
+    if (DEBUG) console.log(myArg, "-help (command).");
   default:
     fs.readFile(`${__dirname}/usage.txt`, (error, data) => {
       if (error) throw error; // polish this up perhaps. try/catch block.
