@@ -12,6 +12,7 @@ global.DEBUG = true;
 
 const fs = require("fs");
 const { initializeApp } = require("./initialize.js");
+const { configApp } = require("./config.js");
 
 const myArgs = process.argv.slice(2);
 const myArg = myArgs[0];
@@ -26,7 +27,7 @@ switch (myArg) {
   case "config":
   case "c":
     if (DEBUG) console.log(myArg, "-display config file.");
-    // configApp();
+    configApp();
     break;
   case "token":
   case "t":
