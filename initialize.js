@@ -15,6 +15,8 @@ const Logger = require("./logger");
 const path = require("path");
 const fsP = require("fs").promises;
 
+const { files, dirs } = require("./templates.js");
+
 const lg = new Logger();
 lg.listen();
 
@@ -27,8 +29,8 @@ function initializeApp() {
     case "--all":
     case "--a":
       if (DEBUG) console.log(myArg, "-creating files and folders");
-      //   createFolders();
-      //   createFiles();
+      createDirs();
+      createFiles();
       break;
     case "--mk":
     case "--m":
@@ -38,7 +40,8 @@ function initializeApp() {
     case "--cat":
     case "--c":
       if (DEBUG)
-        console.log(myArg, "-creating default config file and the help files");
+        console.log(myArg, "-creating default config files and the help files");
+      createFiles();
       break;
     case "--help":
     case "--h":
@@ -57,7 +60,7 @@ function initializeApp() {
 //
 // moral is to put the logs up front and make sure no 'log' emits come in front of calling createDirs() in the mk branch of the
 // switch if you ever want this to say "All directories created".
-const dirs = ["logs", "models", "views", "routes", "json"]; //temporarily here. will be moved to template file later on.
+//temporarily here. will be moved to template file later on.
 
 function createDirs() {
   if (DEBUG) console.log("init.createDirs()");
@@ -109,6 +112,32 @@ function createDirs() {
 
 function createFiles() {
   if (DEBUG) console.log("init.createFiles()");
+  files.forEach((file) => {
+    data =
+      file.path === "json" ? JSON.stringify(file.data, null, 2) : file.data;
+    if (!fs.existsSync(path.join(`${__dirname}/${file.path}/${file.name}`))) {
+      fs.writeFile(`./${file.path}/${file.name}`, data, (error) => {
+        let msg = "";
+        if (error) {
+          msg = `Encountered an error writing file "${__dirname}/${file.path}/${file.name}": ${error}`;
+          console.error(msg);
+          lg.emit("log", "init.createFiles()", "ERROR", msg);
+        } else {
+          msg = `Succesfully created file "${__dirname}/${file.path}/${file.name}"`;
+          console.log(msg);
+          lg.emit("log", "init.createFiles()", "INFO", msg);
+        }
+      });
+    } else {
+      console.log(`"${__dirname}/${file.path}/${file.name}" already exists.`);
+      lg.emit(
+        "log",
+        ".init.createFiles()",
+        "INFO",
+        `"${__dirname}/${file.path}/${file.name}" already exists.`
+      );
+    }
+  });
 }
 
 module.exports = {
