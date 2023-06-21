@@ -19,6 +19,8 @@ lg.listen();
 // common core modules
 const fs = require("fs");
 
+const { configJson } = require("./templates");
+
 const myArgs = process.argv.slice(2);
 
 function displayConfig() {
@@ -32,8 +34,8 @@ function displayConfig() {
 
 function resetConfig() {
   if (DEBUG) console.log("config.resetConfig()");
-  let configData = JSON.stringify(configJson, null, 2);
-  fs.writeFile(__dirname + "json/config.json", configData, (error) => {
+  let configdata = JSON.stringify(configData, null, 2);
+  fs.writeFile(__dirname + "/json/config.json", configdata, (error) => {
     if (error) throw error;
     if (DEBUG) console.log("Config file reverted to original state");
     lg.emit(
@@ -107,7 +109,7 @@ function configApp() {
     case "--help":
     case "--h":
     default:
-      fs.readFile(`${__dirname}/config.txt`, (error, data) => {
+      fs.readFile(`${__dirname}/views/config.txt`, (error, data) => {
         if (error) throw error; // polish this up perhaps. try/catch block.
         console.log(data.toString());
       });
