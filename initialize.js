@@ -13,7 +13,7 @@ date: 2023/06/19
 const fs = require("fs");
 const Logger = require("./logger");
 const path = require("path");
-const fsP = require("fs").promises;
+// const fsP = require("fs").promises;
 
 const { files, dirs } = require("./templates.js");
 
@@ -22,7 +22,7 @@ lg.listen();
 
 const myArgs = process.argv.slice(2);
 const myArg = myArgs[1];
-function initializeApp() {
+async function initializeApp() {
   if (DEBUG) console.log("-initializeApp() running...");
   //   lg.emit("log", "initializeApp()", "INFO", "initialize app **test log.");
   switch (myArg) {
@@ -47,87 +47,79 @@ function initializeApp() {
     case "--h":
     default:
       fs.readFile(`${__dirname}/initialize.txt`, (error, data) => {
-        if (error) throw error; // polish this up perhaps. try/catch block.
+        if (error) throw error;
         console.log(data.toString());
       });
   }
 }
-
-// suspect logs for dir creation bug. When go through if logs isn't leading folder
-// it will be created when emit "log" when any of the dirs in the list already exist
-// because it goes to the catch of the try block which includes an emit
-// then when it gets to it later in list it's already there.
-//
-// moral is to put the logs up front and make sure no 'log' emits come in front of calling createDirs() in the mk branch of the
-// switch if you ever want this to say "All directories created".
-//temporarily here. will be moved to template file later on.
 
 function createDirs() {
   if (DEBUG) console.log("init.createDirs()");
   let mkCount = 0;
   let made = [];
   dirs.forEach((dir) => {
-    try {
-      if (!fs.existsSync(path.join(__dirname, dir))) {
-        fsP.mkdir(path.join(__dirname, dir));
-        mkCount++;
+    if (!fs.existsSync(path.join(__dirname, dir))) {
+      try {
+        fs.mkdirSync(path.join(__dirname, dir));
+        let successMsg = `Directory '${__dirname}/${dir}' was created successfully.`;
+        console.log(successMsg);
+        lg.emit("log", "initialize.createDirs()", "INFO", successMsg);
+        mkCount++; // Increment mkCount when directory is created
         made.push(dir);
+      } catch (error) {
+        let errorMsg = `Error creating directory '${dir}': ` + error;
+        console.error(errorMsg);
+        lg.emit("log", "initialize.createDirs()", "ERROR", errorMsg);
       }
-    } catch (error) {
-      console.log(`Error creating directory '${dir}': ` + error);
-      lg.emit(
-        "log",
-        "init.createDirs()",
-        "WARNING",
-        `Error creating directory '${dir}': ` + error
-      );
+    } else {
+      let msg = `Directory '${__dirname}/${dir}' already exists.`;
+      console.log(msg);
+      lg.emit("log", "initialize.createDirs()", "INFO", msg);
     }
   });
+
+  let mkMsg = "";
   if (mkCount === 0) {
-    console.log("All directories already exist.");
-    lg.emit(
-      "log",
-      "init.createDirs()",
-      "INFO",
-      "All directories already exist."
-    );
+    mkMsg = "All directories already exist.";
   } else if (mkCount < dirs.length) {
-    console.log(`${mkCount}/${dirs.length} directories created: [${made}]`);
-    lg.emit(
-      "log",
-      "init.createDirs()",
-      "INFO",
-      `${mkCount}/${dirs.length} directories created: [${made}]`
-    );
+    mkMsg = `${mkCount}/${dirs.length} directories created: [${made}]`;
   } else {
-    console.log("All directories created");
-    lg.emit(
-      "log",
-      "init.createDirs()",
-      "INFO",
-      `All directories created: [${made}]`
-    );
+    mkMsg = `All directories created (${mkCount} of ${dirs.length})`;
   }
+  console.log(mkMsg);
+  lg.emit("log", "initialize.createDirs()", "INFO", mkMsg);
 }
 
 function createFiles() {
   if (DEBUG) console.log("init.createFiles()");
+  let jsonCount = 0;
+  let txtCount = 0;
+  let jsonMkCount = 0;
+  let txtMkCount = 0;
   files.forEach((file) => {
     data =
       file.path === "json" ? JSON.stringify(file.data, null, 2) : file.data;
+    if (file.path === "json") {
+      jsonCount++;
+    } else {
+      txtCount++;
+    }
     if (!fs.existsSync(path.join(`${__dirname}/${file.path}/${file.name}`))) {
-      fs.writeFile(`./${file.path}/${file.name}`, data, (error) => {
-        let msg = "";
-        if (error) {
-          msg = `Encountered an error writing file "${__dirname}/${file.path}/${file.name}": ${error}`;
-          console.error(msg);
-          lg.emit("log", "init.createFiles()", "ERROR", msg);
+      try {
+        fs.writeFileSync(`./${file.path}/${file.name}`, data);
+        let msg = `Succesfully created file "${__dirname}/${file.path}/${file.name}"`;
+        console.log(msg);
+        lg.emit("log", "initialize.createFiles()", "INFO", msg);
+        if (file.path === "json") {
+          jsonMkCount++;
         } else {
-          msg = `Succesfully created file "${__dirname}/${file.path}/${file.name}"`;
-          console.log(msg);
-          lg.emit("log", "init.createFiles()", "INFO", msg);
+          txtMkCount++;
         }
-      });
+      } catch (error) {
+        let msg = `Encountered an error writing file "${__dirname}/${file.path}/${file.name}": ${error}`;
+        console.error(msg);
+        lg.emit("log", "init.createFiles()", "ERROR", msg);
+      }
     } else {
       console.log(`"${__dirname}/${file.path}/${file.name}" already exists.`);
       lg.emit(
@@ -138,6 +130,31 @@ function createFiles() {
       );
     }
   });
+
+  let countMsg = "";
+  if (txtCount === 0) {
+    CountMsg = "No text files in batch.";
+  } else if (txtMkCount === 0) {
+    CountMsg = "All text files already exist.";
+  } else if (txtCount === txtMkCount) {
+    countMsg = `All text files (${txtMkCount} of ${txtCount}) created.`;
+  } else {
+    countMsg = `${txtMkCount} of ${txtCount} text files created.`;
+  }
+  console.log(countMsg);
+  lg.emit("log", "initialize.createFiles()", "INFO", countMsg);
+
+  if (jsonCount === 0) {
+    countMsg = "No JSON files in batch.";
+  } else if (jsonMkCount === 0) {
+    countMsg = "All JSON files already exist.";
+  } else if (jsonCount === jsonMkCount) {
+    countMsg = `All JSON files (${jsonMkCount} of ${jsonCount}) created.`;
+  } else {
+    countMsg = `${jsonMkCount} of ${jsonCount} JSON files created.`;
+  }
+  console.log(countMsg);
+  lg.emit("log", "initialize.createFiles()", "INFO", countMsg);
 }
 
 module.exports = {
