@@ -11,39 +11,98 @@ date: 2023/06/20
 
 */
 
-// load the logEvents module
-const logEvents = require("./logger");
+const Logger = require("./logger");
 
-// define/extend an EventEmitter class
-const EventEmitter = require("events");
-class MyEmitter extends EventEmitter {}
-
-// initialize an new emitter object
-const myEmitter = new MyEmitter();
-// add the listener for the logEvent
-myEmitter.on("log", (event, level, msg) => new logEvents(event, level, msg));
+const lg = new Logger();
+lg.listen();
 
 // common core modules
 const fs = require("fs");
 
 const myArgs = process.argv.slice(2);
 
+function displayConfig() {
+  if (DEBUG) console.log("configApp()");
+  fs.readFile(__dirname + "/json/config.json", (error, data) => {
+    if (error) throw error;
+    console.log(JSON.parse(data));
+  });
+  lg.emit("log", "config.displayConfig()", "INFO", "config.json displayed");
+}
+
+function resetConfig() {
+  if (DEBUG) console.log("config.resetConfig()");
+  let configData = JSON.stringify(configJson, null, 2);
+  fs.writeFile(__dirname + "json/config.json", configData, (error) => {
+    if (error) throw error;
+    if (DEBUG) console.log("Config file reverted to original state");
+    lg.emit(
+      "log",
+      "config.resetConfig()",
+      "INFO",
+      "config.json reverted to original state."
+    );
+  });
+}
+
+function setConfig() {
+  if (DEBUG) console.log("config.setConfig()");
+  if (DEBUG) console.log(myArgs);
+  let match = false;
+  fs.readFile(__dirname + "/json/config.json", (error, data) => {
+    if (error) throw error;
+    if (DEBUG) console.log(JSON.parse(data));
+    let cfg = JSON.parse(data);
+    for (let key of Object.keys(cfg)) {
+      if (key === myArgs[2]) {
+        cfg[key] = myArgs[3];
+        match = true;
+      }
+    }
+    if (!match) {
+      console.log(`Invalid key: ${myArgs[2]}, try again.`);
+      lg.emit(
+        "log",
+        "config.setConfig()",
+        "WARNING",
+        `invalid key: ${myArgs[2]}`
+      );
+    }
+    if (DEBUG) console.log(cfg);
+    data = JSON.stringify(cfg, null, 2);
+    fs.writeFile(__dirname + "/json/config.json", data, (error) => {
+      if (error) throw error;
+      if (DEBUG) console.log("Config file has been updated.");
+      lg.emit(
+        "log",
+        "config.setConfig()",
+        "INFO",
+        `config.json "${myArgs[2]}": updated to "${myArgs[3]}"`
+      );
+    });
+  });
+}
+
 function configApp() {
   if (DEBUG) console.log("-configApp() running...");
-  myEmitter.emit("log", "configApp()", "INFO", "config option was called");
+  lg.emit("log", "configApp()", "INFO", "config option was called");
 
   switch (myArgs[1]) {
     case "--show":
-      // displayConfig();
-      console.log("Display config running...");
+      displayConfig();
       break;
     case "--reset":
-      // resetConfig();
-      console.log("Reset config running...");
+      resetConfig();
       break;
     case "--set":
-      // setConfig();
-      console.log("Set config running...");
+      if (myArgs.length < 4) {
+        console.log(
+          "Error: invalid syntax. Please type node myapp config --set [attribute] [new value]"
+        );
+        lg.emit("log", "config.configApp() --set", "WARNING", "invalid syntax");
+      } else {
+        setConfig();
+      }
       break;
     case "--help":
     case "--h":
