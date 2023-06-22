@@ -24,13 +24,13 @@ class Logger extends EventEmitter {
       const currentMonthDir = currentYearDir + "/" + getMonth(new Date());
       // if 'logs/' doesn't exist, make it
       if (!fs.existsSync(path.join(__dirname, "logs/")))
-        await fsP.mkdir(path.join(__dirname, "logs/"));
+        fsP.mkdir(path.join(__dirname, "logs/"));
       // if subdir in 'logs/' for the current year doesn't exist, make it.
       if (!fs.existsSync(path.join(__dirname, currentYearDir)))
-        await fsP.mkdir(path.join(__dirname, currentYearDir));
+        fsP.mkdir(path.join(__dirname, currentYearDir));
       // if subdir in 'logs/<currentYear>' for the current month doesn't exist, make it.
       if (!fs.existsSync(path.join(__dirname, currentMonthDir)))
-        await fsP.mkdir(path.join(__dirname, currentMonthDir));
+        fsP.mkdir(path.join(__dirname, currentMonthDir));
       // formated file name with date.
       const fileName = `${format(new Date(), "yyy-MM-dd")}` + "_events.log";
       // if file doesn't exist, will be created, otherwise logItem will be appended.

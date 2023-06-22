@@ -8,7 +8,7 @@ see usage.txt file
 Date: 2023/6/19
 */
 
-global.DEBUG = true;
+global.DEBUG = false;
 
 const fs = require("fs");
 const { initializeApp } = require("./initialize.js");

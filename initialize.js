@@ -29,8 +29,9 @@ async function initializeApp() {
     case "--all":
     case "--a":
       if (DEBUG) console.log(myArg, "-creating files and folders");
-      createDirs();
-      createFiles();
+      const { mkCount, made } = await createDirs();
+      await createDirsMsg(mkCount, made);
+      await createFiles();
       break;
     case "--mk":
     case "--m":
@@ -53,7 +54,7 @@ async function initializeApp() {
   }
 }
 
-function createDirs() {
+async function createDirs() {
   if (DEBUG) console.log("init.createDirs()");
   let mkCount = 0;
   let made = [];
@@ -77,7 +78,10 @@ function createDirs() {
       lg.emit("log", "initialize.createDirs()", "INFO", msg);
     }
   });
+  return { mkCount, made };
+}
 
+async function createDirsMsg(mkCount, made) {
   let mkMsg = "";
   if (mkCount === 0) {
     mkMsg = "All directories already exist.";
@@ -90,7 +94,7 @@ function createDirs() {
   lg.emit("log", "initialize.createDirs()", "INFO", mkMsg);
 }
 
-function createFiles() {
+async function createFiles() {
   if (DEBUG) console.log("init.createFiles()");
   let jsonCount = 0;
   let txtCount = 0;
