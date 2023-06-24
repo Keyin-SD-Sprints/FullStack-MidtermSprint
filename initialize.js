@@ -22,6 +22,7 @@ lg.listen();
 
 const myArgs = process.argv.slice(2);
 const myArg = myArgs[1];
+
 async function initializeApp() {
   if (DEBUG) console.log("-initializeApp() running...");
   //   lg.emit("log", "initializeApp()", "INFO", "initialize app **test log.");
