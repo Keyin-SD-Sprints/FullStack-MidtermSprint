@@ -13,6 +13,7 @@ global.DEBUG = false;
 const fs = require("fs");
 const { initializeApp } = require("./initialize.js");
 const { configApp } = require("./config.js");
+const { tokenApp } = require("./token.js");
 
 const myArgs = process.argv.slice(2);
 const myArg = myArgs[0];
@@ -32,7 +33,7 @@ switch (myArg) {
   case "token":
   case "t":
     if (DEBUG) console.log(myArg, "-generate user token.");
-    // tokenApp();
+    tokenApp();
     break;
   case "--help":
   case "--h":
