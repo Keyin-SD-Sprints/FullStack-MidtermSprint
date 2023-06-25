@@ -14,6 +14,10 @@ const fs = require("fs");
 const { initializeApp } = require("./initialize.js");
 const { configApp } = require("./config.js");
 const { tokenApp } = require("./token.js");
+const Logger = require("./logger");
+
+const lg = new Logger();
+lg.listen();
 
 const myArgs = process.argv.slice(2);
 const myArg = myArgs[0];
@@ -39,8 +43,16 @@ switch (myArg) {
   case "--h":
     if (DEBUG) console.log(myArg, "-help (command).");
   default:
-    fs.readFile(`${__dirname}/usage.txt`, (error, data) => {
-      if (error) throw error; // polish this up perhaps. try/catch block.
-      console.log(data.toString());
-    });
+    try {
+      if (!fs.existsSync(`${__dirname}/usage.txt`))
+        throw new Error("usage.txt doesn't exist.");
+      fs.readFile(`${__dirname}/usage.txt`, (error, data) => {
+        console.log(data.toString());
+      });
+    } catch (error) {
+      let msg = `There was a problem loading help files: ${error}`;
+      console.error(msg);
+      lg.emit("log", ".myapp()", "ERROR", msg);
+      console.log("Recomend run: node myapp init --all");
+    }
 }
