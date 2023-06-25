@@ -52,7 +52,7 @@ switch (myArg) {
     } catch (error) {
       let msg = `There was a problem loading help files: ${error}`;
       console.error(msg);
-      lg.emit("log", ".myapp()", msg);
+      lg.emit("log", ".myapp()", "ERROR", msg);
       console.log("Recomend run: node myapp init --all");
     }
 }
