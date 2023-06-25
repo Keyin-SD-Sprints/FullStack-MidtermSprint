@@ -41,7 +41,8 @@ function tokenApp() {
   switch (myArg) {
     case "--count":
     case "--c":
-    //tokenCount();
+      tokenCount();
+      break;
     case "--new":
     case "--n":
       // if not long enough do a message ( < 3 length)
@@ -63,11 +64,25 @@ function tokenApp() {
     case "--help":
     case "--h":
     default:
-      fs.readFile(`${__dirname}/token.txt`, (error, data) => {
+      fs.readFile(`${__dirname}/views/token.txt`, (error, data) => {
         if (error) throw error;
         console.log(data.toString());
       });
       lg.emit("log", "token.tokenApp()", "INFO", "token help file accessed");
+  }
+
+  function tokenCount() {
+    if (DEBUG) console.log("token.tokenCount()");
+    try {
+      let tokenList = JSON.parse(fs.readFileSync("./json/token.json"));
+      let count = tokenList.length;
+      console.log(`The token count is: ${count}`);
+      return count;
+    } catch (error) {
+      let msg = `A problem was encountered with tokenCount(): ${error}`;
+      console.log(msg);
+      lg.emit("log", "token.tokenCount()", "ERROR", msg);
+    }
   }
 
   function newToken(username) {
@@ -94,7 +109,7 @@ function tokenApp() {
       let msg = `New token ${newToken.token} was created for ${username}`;
       console.log(msg);
       lg.emit("log", "token.newToken()", "INFO", msg);
-      return newToken.token;
+      return { token: newToken.token, expires: newToken.expires };
     } catch (error) {
       let errorMsg = `Problem encountered generating new token: ${error}`;
       console.log(errorMsg);
