@@ -74,7 +74,7 @@ async function createDirs() {
         lg.emit("log", "initialize.createDirs()", "ERROR", errorMsg);
       }
     } else {
-      let msg = `Directory '${__dirname}/${dir}' already exists.`;
+      let msg = `Directory '${__dirname}\\${dir}' already exists.`;
       console.log(msg);
       lg.emit("log", "initialize.createDirs()", "INFO", msg);
     }
@@ -87,9 +87,9 @@ async function createDirsMsg(mkCount, made) {
   if (mkCount === 0) {
     mkMsg = "All directories already exist.";
   } else if (mkCount < dirs.length) {
-    mkMsg = `${mkCount}/${dirs.length} directories created: [${made}]`;
+    mkMsg = `${mkCount} of ${dirs.length} directories created: [${made}]`;
   } else {
-    mkMsg = `All directories created (${mkCount} of ${dirs.length})`;
+    mkMsg = `All directories created (${mkCount} of ${dirs.length}): [${made}]`;
   }
   console.log(mkMsg);
   lg.emit("log", "initialize.createDirs()", "INFO", mkMsg);
@@ -112,7 +112,7 @@ async function createFiles() {
     if (!fs.existsSync(path.join(`${__dirname}/${file.path}/${file.name}`))) {
       try {
         fs.writeFileSync(`./${file.path}/${file.name}`, data);
-        let msg = `Succesfully created file "${__dirname}/${file.path}/${file.name}"`;
+        let msg = `Succesfully created file "${__dirname}\\${file.path}\\${file.name}"`;
         console.log(msg);
         lg.emit("log", "initialize.createFiles()", "INFO", msg);
         if (file.path === "json") {
@@ -121,26 +121,22 @@ async function createFiles() {
           txtMkCount++;
         }
       } catch (error) {
-        let msg = `Encountered an error writing file "${__dirname}/${file.path}/${file.name}": ${error}`;
+        let msg = `Encountered an error writing file "${__dirname}\\${file.path}\\${file.name}": ${error}`;
         console.error(msg);
         lg.emit("log", "init.createFiles()", "ERROR", msg);
       }
     } else {
-      console.log(`"${__dirname}/${file.path}/${file.name}" already exists.`);
-      lg.emit(
-        "log",
-        ".init.createFiles()",
-        "INFO",
-        `"${__dirname}/${file.path}/${file.name}" already exists.`
-      );
+      let msg = `"${__dirname}\\${file.path}\\${file.name}" already exists.`;
+      console.log(msg);
+      lg.emit("log", ".init.createFiles()", "INFO", msg);
     }
   });
 
   let countMsg = "";
   if (txtCount === 0) {
-    CountMsg = "No text files in batch.";
+    countMsg = "No text files in batch.";
   } else if (txtMkCount === 0) {
-    CountMsg = "All text files already exist.";
+    countMsg = "All text files already exist.";
   } else if (txtCount === txtMkCount) {
     countMsg = `All text files (${txtMkCount} of ${txtCount}) created.`;
   } else {
