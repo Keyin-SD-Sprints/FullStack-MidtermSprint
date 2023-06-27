@@ -29,6 +29,7 @@ const crc32 = require("crc/crc32");
 const { format } = require("date-fns");
 
 const Logger = require("./logger");
+const { error } = require("console");
 
 const lg = new Logger();
 lg.listen();
@@ -54,8 +55,20 @@ function tokenApp() {
       }
       break;
     case "--upd":
-    case "--u":
-      // need 5 args (token onward)
+    case "--up":
+      if (myArgs.length < 5) {
+        console.log(
+          "Invalid syntax... node myapp token --upd [option] [username] [new value]"
+        );
+        lg.emit(
+          "log",
+          "token.updateToken() --upd",
+          "WARNING",
+          "invalid syntax"
+        );
+      } else {
+        updateToken(myArgs);
+      }
       break;
     case "--search":
     case "--s":
@@ -127,6 +140,47 @@ function tokenApp() {
       console.log(errorMsg);
       lg.emit("log", "tokenApp.newToken()", "ERROR", errorMsg);
     }
+  }
+}
+
+function updateToken(argv) {
+  if (DEBUG) console.log("token.updateToken()");
+  if (DEBUG) console.log(argv);
+  try {
+    let tokens = JSON.parse(fs.readFileSync("./json/token.json"));
+    tokens.forEach((obj) => {
+      if (obj.username === argv[3]) {
+        switch (argv[2]) {
+          case "p":
+          case "P":
+            obj.phone = argv[4];
+            break;
+          case "e":
+          case "E":
+            obj.email = argv[4];
+            break;
+          default:
+            throw error;
+        }
+      }
+    });
+    userTokens = JSON.stringify(tokens);
+    fs.writeFile(__dirname + "/json/token.json", userTokens, (err) => {
+      if (err) console.log(err);
+      else {
+        console.log(`Token record for ${argv[3]} was updated with ${argv[4]}.`);
+        lg.emit(
+          "log",
+          "token.updateToken()",
+          "INFO",
+          `Token record for ${argv[3]} was updated with ${argv[4]}.`
+        );
+      }
+    });
+  } catch (error) {
+    let errorMsg = `Problem encountered while updating token: ${error}`;
+    console.log(errorMsg);
+    lg.emit("log", "tokenApp.updateToken()", "ERROR", errorMsg);
   }
 }
 
