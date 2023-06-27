@@ -64,11 +64,23 @@ function tokenApp() {
     case "--help":
     case "--h":
     default:
-      fs.readFile(`${__dirname}/views/token.txt`, (error, data) => {
-        if (error) throw error;
-        console.log(data.toString());
-      });
-      lg.emit("log", "token.tokenApp()", "INFO", "token help file accessed");
+      try {
+        if (!fs.existsSync(`${__dirname}/views/token.txt`))
+          throw new Error(`${__dirname}\\views\\token.txt doesn't exist.`);
+        fs.readFile(`${__dirname}/views/token.txt`, (error, data) => {
+          console.log(data.toString());
+        });
+      } catch (error) {
+        let msg = `There was a problem loading help files: ${error}`;
+        console.error(msg);
+        lg.emit("log", ".myapp()", "ERROR", msg);
+        console.log("Recomend run: node myapp init --all");
+      }
+    //   fs.readFile(`${__dirname}/views/token.txt`, (error, data) => {
+    //     if (error) throw error;
+    //     console.log(data.toString());
+    //   });
+    //   lg.emit("log", "token.tokenApp()", "INFO", "token help file accessed");
   }
 
   function tokenCount() {

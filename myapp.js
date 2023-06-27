@@ -41,12 +41,11 @@ switch (myArg) {
     break;
   case "--help":
   case "--h":
-    if (DEBUG) console.log(myArg, "-help (command).");
   default:
     try {
-      if (!fs.existsSync(`${__dirname}/usage.txt`))
-        throw new Error("usage.txt doesn't exist.");
-      fs.readFile(`${__dirname}/usage.txt`, (error, data) => {
+      if (!fs.existsSync(`${__dirname}/views/usage.txt`))
+        throw new Error(`${__dirname}\\views\\usage.txt doesn't exist.`);
+      fs.readFile(`${__dirname}/views/usage.txt`, (error, data) => {
         console.log(data.toString());
       });
     } catch (error) {

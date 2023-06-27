@@ -109,10 +109,22 @@ function configApp() {
     case "--help":
     case "--h":
     default:
-      fs.readFile(`${__dirname}/views/config.txt`, (error, data) => {
-        if (error) throw error; // polish this up perhaps. try/catch block.
-        console.log(data.toString());
-      });
+      try {
+        if (!fs.existsSync(`${__dirname}/views/config.txt`))
+          throw new Error(`${__dirname}\\views\\config.txt doesn't exist.`);
+        fs.readFile(`${__dirname}/views/config.txt`, (error, data) => {
+          console.log(data.toString());
+        });
+      } catch (error) {
+        let msg = `There was a problem loading help files: ${error}`;
+        console.error(msg);
+        lg.emit("log", ".myapp()", "ERROR", msg);
+        console.log("Recomend run: node myapp init --all");
+      }
+    // fs.readFile(`${__dirname}/views/config.txt`, (error, data) => {
+    //   if (error) throw error; // polish this up perhaps. try/catch block.
+    //   console.log(data.toString());
+    // });
   }
 }
 
