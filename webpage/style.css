@@ -1,0 +1,53 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* Header Styling*/
+header {
+  display: flex;
+  flex-direction: center;
+  justify-content: center;
+  background-color: #8224bc;
+  color: #fff;
+  font-size: 1.25em;
+  padding-top: 20px;
+  text-align: center;
+  height: 10vh;
+}
+body {
+  justify-content: center;
+  text-align: center;
+}
+#username {
+  width: 250px;
+}
+#mainpage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 80vh;
+  padding: 0 50;
+}
+/* Footer Styling*/
+footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  text-align: center;
+  background-color: #333;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+  height: 10vh;
+}
+
+/* Footer paragraph styling*/
+footer p {
+  color: #8b2bc6;
+  text-shadow: -1px -1px 0 white, -1px -1px 0 white, -1px -1px 0 white,
+    -1px -1px 0 white;
+  font-size: 1.25em;
+  text-align: center;
+}
