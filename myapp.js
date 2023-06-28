@@ -15,6 +15,7 @@ const { initializeApp } = require("./initialize.js");
 const { configApp } = require("./config.js");
 const { tokenApp } = require("./token.js");
 const Logger = require("./logger");
+const server = require("./webServer.js");
 
 const lg = new Logger();
 lg.listen();
@@ -38,6 +39,10 @@ switch (myArg) {
   case "t":
     if (DEBUG) console.log(myArg, "-generate user token.");
     tokenApp();
+    break;
+  case "--server":
+  case "--s":
+    server();
     break;
   case "--help":
   case "--h":
