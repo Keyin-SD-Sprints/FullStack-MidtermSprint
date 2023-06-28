@@ -72,7 +72,7 @@ function tokenApp() {
       break;
     case "--search":
     case "--s":
-      tokenSearch(myArgs);
+      //tokenSearch();
       break;
     case "--help":
     case "--h":
@@ -181,56 +181,6 @@ function updateToken(argv) {
     let errorMsg = `Problem encountered while updating token: ${error}`;
     console.log(errorMsg);
     lg.emit("log", "tokenApp.updateToken()", "ERROR", errorMsg);
-  }
-}
-
-function tokenSearch(argv) {
-  try {
-    let tokens = JSON.parse(fs.readFileSync("./json/token.json"));
-
-    switch (argv[2]) {
-      case "u":
-      case "U":
-        tokens.forEach((obj) => {
-          if (obj.username == argv[3]) {
-            found = true;
-            console.log(`${obj.username} : ${obj.token}`);
-            return obj.token;
-          }
-        });
-        if (!found) throw new Error("username not found.");
-        break;
-      case "e":
-      case "E":
-        tokens.forEach((obj) => {
-          if (obj.email == argv[3]) {
-            found = true;
-            console.log(`${obj.username} : ${obj.token}`);
-            return obj.token;
-          }
-        });
-        if (!found) throw new Error("Email not found.");
-        break;
-      case "p":
-      case "P":
-        tokens.forEach((obj) => {
-          if (obj.phone == argv[3]) {
-            found = true;
-            console.log(`${obj.username} : ${obj.token}`);
-            return obj.token;
-          }
-        });
-        if (!found) throw new Error("Phone number not found.");
-        break;
-      default:
-        throw new Error(
-          "Invalid syntax.  Please type node myapp --search [attribute] [search value]"
-        );
-    }
-  } catch (error) {
-    let errorMsg = `Problem encountered while searching for token:  ${error}`;
-    console.log(errorMsg);
-    lg.emit("log", "tokenApp.tokenSearch()", "ERROR", errorMsg);
   }
 }
 
