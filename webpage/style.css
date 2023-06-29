@@ -30,6 +30,11 @@ body {
   height: 80vh;
   padding: 0 50;
 }
+
+#content {
+  margin-top: 40px;
+  color: #333;
+}
 /* Footer Styling*/
 footer {
   display: flex;

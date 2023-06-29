@@ -95,51 +95,51 @@ function tokenApp() {
     //   });
     //   lg.emit("log", "token.tokenApp()", "INFO", "token help file accessed");
   }
+}
 
-  function tokenCount() {
-    if (DEBUG) console.log("token.tokenCount()");
-    try {
-      let tokenList = JSON.parse(fs.readFileSync("./json/token.json"));
-      let count = tokenList.length;
-      console.log(`The token count is: ${count}`);
-      return count;
-    } catch (error) {
-      let msg = `A problem was encountered with tokenCount(): ${error}`;
-      console.log(msg);
-      lg.emit("log", "token.tokenCount()", "ERROR", msg);
-    }
+function tokenCount() {
+  if (DEBUG) console.log("token.tokenCount()");
+  try {
+    let tokenList = JSON.parse(fs.readFileSync("./json/token.json"));
+    let count = tokenList.length;
+    console.log(`The token count is: ${count}`);
+    return count;
+  } catch (error) {
+    let msg = `A problem was encountered with tokenCount(): ${error}`;
+    console.log(msg);
+    lg.emit("log", "token.tokenCount()", "ERROR", msg);
   }
+}
 
-  function newToken(username) {
-    if (DEBUG) console.log("token.newToken()");
-    try {
-      let tokenList = JSON.parse(fs.readFileSync("./json/token.json"));
-      const newToken = { ...tokenList[0] };
-      //   console.log(newToken);
+function newToken(username) {
+  if (DEBUG) console.log("token.newToken()");
+  try {
+    let tokenList = JSON.parse(fs.readFileSync("./json/token.json"));
+    const token = { ...tokenList[0] };
+    //   console.log(token);
 
-      let now = new Date();
-      let expiry = new Date(now);
-      expiry.setDate(expiry.getDate() + 3);
+    let now = new Date();
+    let expiry = new Date(now);
+    expiry.setDate(expiry.getDate() + 3);
 
-      newToken.created = `${format(now, "yyyy-MM-dd HH:mm:ss")}`;
-      newToken.username = username;
-      newToken.token = crc32(username).toString(16);
-      newToken.expires = `${format(expiry, "yyyy-MM-dd HH:mm:ss")}`;
+    token.created = `${format(now, "yyyy-MM-dd HH:mm:ss")}`;
+    token.username = username;
+    token.token = crc32(username).toString(16);
+    token.expires = `${format(expiry, "yyyy-MM-dd HH:mm:ss")}`;
 
-      tokenList.push(newToken);
-      userTokens = JSON.stringify(tokenList, null, 2);
+    tokenList.push(token);
+    userTokens = JSON.stringify(tokenList, null, 2);
 
-      fs.writeFileSync(`${__dirname}/json/token.json`, userTokens);
+    fs.writeFileSync(`${__dirname}/json/token.json`, userTokens);
 
-      let msg = `New token ${newToken.token} was created for ${username}`;
-      console.log(msg);
-      lg.emit("log", "token.newToken()", "INFO", msg);
-      return { token: newToken.token, expires: newToken.expires };
-    } catch (error) {
-      let errorMsg = `Problem encountered generating new token: ${error}`;
-      console.log(errorMsg);
-      lg.emit("log", "tokenApp.newToken()", "ERROR", errorMsg);
-    }
+    let msg = `New token ${token.token} was created for ${username}`;
+    console.log(msg);
+    lg.emit("log", "token.newToken()", "INFO", msg);
+    return token.token;
+  } catch (error) {
+    let errorMsg = `Problem encountered generating new token: ${error}`;
+    console.log(errorMsg);
+    lg.emit("log", "tokenApp.newToken()", "ERROR", errorMsg);
   }
 }
 
@@ -242,4 +242,5 @@ function tokenSearch(argv) {
 
 module.exports = {
   tokenApp,
+  newToken,
 };
