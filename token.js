@@ -37,6 +37,11 @@ lg.listen();
 const myArgs = process.argv.slice(2);
 const myArg = myArgs[1];
 
+//Count - displays number of tokens created,
+//New - creates a new token,
+//Update - by inputting a value you can update a token
+//Search - allows you to search by username, email or phone to find a particular token
+//Help - displays a help menu
 function tokenApp() {
   if (DEBUG) console.log("-tokenApp() running...");
   switch (myArg) {
@@ -89,14 +94,10 @@ function tokenApp() {
         lg.emit("log", ".myapp()", "ERROR", msg);
         console.log("Recomend run: node myapp init --all");
       }
-    //   fs.readFile(`${__dirname}/views/token.txt`, (error, data) => {
-    //     if (error) throw error;
-    //     console.log(data.toString());
-    //   });
-    //   lg.emit("log", "token.tokenApp()", "INFO", "token help file accessed");
   }
 }
 
+// To get the count of tokens created in the JSON file
 function tokenCount() {
   if (DEBUG) console.log("token.tokenCount()");
   try {
@@ -111,6 +112,7 @@ function tokenCount() {
   }
 }
 
+//To create a new token in the JSON file
 function newToken(username) {
   if (DEBUG) console.log("token.newToken()");
   try {
@@ -143,6 +145,7 @@ function newToken(username) {
   }
 }
 
+//To update the username, phone or email of a token in the JSON file
 function updateToken(argv) {
   if (DEBUG) console.log("token.updateToken()");
   if (DEBUG) console.log(argv);
@@ -183,8 +186,10 @@ function updateToken(argv) {
     lg.emit("log", "tokenApp.updateToken()", "ERROR", errorMsg);
   }
 }
-
+//To search for tokens stored in the JSON file using username, email or phone number
 function tokenSearch(argv) {
+  if (DEBUG) console.log("token.tokenSearch()");
+  if (DEBUG) console.log(argv);
   try {
     let tokens = JSON.parse(fs.readFileSync("./json/token.json"));
 
@@ -233,12 +238,6 @@ function tokenSearch(argv) {
     lg.emit("log", "tokenApp.tokenSearch()", "ERROR", errorMsg);
   }
 }
-
-// function addDays(date, days) {
-//   var result = new Date(date);
-//   result.setDate(result.getDate() + days);
-//   return result;
-// }
 
 module.exports = {
   tokenApp,
