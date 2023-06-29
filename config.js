@@ -35,16 +35,22 @@ function displayConfig() {
 function resetConfig() {
   if (DEBUG) console.log("config.resetConfig()");
   let configdata = JSON.stringify(configData, null, 2);
-  fs.writeFile(__dirname + "/json/config.json", configdata, (error) => {
-    if (error) throw error;
-    if (DEBUG) console.log("Config file reverted to original state");
-    lg.emit(
-      "log",
-      "config.resetConfig()",
-      "INFO",
-      "config.json reverted to original state."
-    );
-  });
+  try {
+    fs.writeFile(__dirname + "/json/config.json", configdata, (error) => {
+      // if (error) throw error;
+      console.log("Config file reverted to original state");
+      lg.emit(
+        "log",
+        "config.resetConfig()",
+        "INFO",
+        "config.json reverted to original state."
+      );
+    });
+  } catch (error) {
+    let msg = `There was a problem reseting config file: ${error}`;
+    console.log(msg);
+    lg.emit("log", ".config.resetConfig()", "ERROR", msg);
+  }
 }
 
 function setConfig() {
