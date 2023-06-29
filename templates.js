@@ -10,7 +10,6 @@ myapp --help                            displays all help
 
 myapp init --help                       displays help for the init command
 myapp init --all                        creates the folder structure and the config and help files
-node myapp --s                          starts the webserver
 myapp init --mk                         creates the folder structure
 myapp init --cat                        creates the config file with default settings and the help files
 
@@ -27,6 +26,8 @@ myapp token --upd e <username> <phone>  updates the json entry for a given usern
 myapp token --search u <username>       fetches a token for a given username
 myapp token --search e <email>          fetches a token for a given email
 myapp token --search p <phone>          fetches a token for a given phone number
+
+node myapp --server                     starts the webserver
 
 *************************************************************************************************************
 `;

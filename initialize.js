@@ -11,36 +11,42 @@ date: 2023/06/19
 
 */
 const fs = require("fs");
-const Logger = require("./logger");
 const path = require("path");
 // const fsP = require("fs").promises;
 
+const Logger = require("./logger");
 const { files, dirs } = require("./templates.js");
 
+// instance of Logger + activation.
 const lg = new Logger();
 lg.listen();
 
+// args from comand line.
 const myArgs = process.argv.slice(2);
+// the arg for the switch.
 const myArg = myArgs[1];
 
 async function initializeApp() {
+  // CLI otions for init
   if (DEBUG) console.log("-initializeApp() running...");
-  //   lg.emit("log", "initializeApp()", "INFO", "initialize app **test log.");
   switch (myArg) {
     case "--all":
     case "--a":
+      //initialize all files and folders.
       if (DEBUG) console.log(myArg, "-creating files and folders");
       const { mkCount, made } = await createDirs();
       await createDirsMsg(mkCount, made);
-      await createFiles();
+      createFiles();
       break;
     case "--mk":
     case "--m":
+      //initialize all folders
       if (DEBUG) console.log(myArg, "-creating all folders");
       createDirs();
       break;
     case "--cat":
     case "--c":
+      //create all files
       if (DEBUG)
         console.log(myArg, "-creating default config files and the help files");
       createFiles();
@@ -48,6 +54,7 @@ async function initializeApp() {
     case "--help":
     case "--h":
     default:
+      //help or default.
       try {
         if (!fs.existsSync(`${__dirname}/views/init.txt`))
           throw new Error(`${__dirname}\\views\\init.txt doesn't exist.`);
@@ -60,17 +67,14 @@ async function initializeApp() {
         lg.emit("log", ".myapp()", "ERROR", msg);
         console.log("Recomend run: node myapp init --all");
       }
-    // fs.readFile(`${__dirname}/init.txt`, (error, data) => {
-    //   if (error) throw error;
-    //   console.log(data.toString());
-    // });
   }
 }
 
 async function createDirs() {
-  if (DEBUG) console.log("init.createDirs()");
-  let mkCount = 0;
-  let made = [];
+  // create folders.
+  if (DEBUG) console.log("initalize.createDirs()");
+  let mkCount = 0; //tracks total number of folders created.
+  let made = []; //tracks folder names that were created.
   dirs.forEach((dir) => {
     if (!fs.existsSync(path.join(__dirname, dir))) {
       try {
@@ -79,7 +83,7 @@ async function createDirs() {
         console.log(successMsg);
         lg.emit("log", "initialize.createDirs()", "INFO", successMsg);
         mkCount++; // Increment mkCount when directory is created
-        made.push(dir);
+        made.push(dir); // add folder name to list of made folders.
       } catch (error) {
         let errorMsg = `Error creating directory '${dir}': ` + error;
         console.error(errorMsg);
@@ -95,6 +99,9 @@ async function createDirs() {
 }
 
 async function createDirsMsg(mkCount, made) {
+  if (DEBUG) console.log("initialize.createDirsMsg() running...");
+  // does end log and messaging for createDirs.
+  // did this to seperate them out because the logs were getting intermingled.
   let mkMsg = "";
   if (mkCount === 0) {
     mkMsg = "All directories already exist.";
@@ -108,14 +115,17 @@ async function createDirsMsg(mkCount, made) {
 }
 
 async function createFiles() {
-  if (DEBUG) console.log("init.createFiles()");
-  let jsonCount = 0;
-  let txtCount = 0;
-  let jsonMkCount = 0;
-  let txtMkCount = 0;
+  //create files from template.js
+  if (DEBUG) console.log("initalize.createFiles() running...");
+  let jsonCount = 0; // tracks how many json files come in from the batch
+  let txtCount = 0; // tracks how many text files (other files right now) come in from batch
+  let jsonMkCount = 0; // tracks how many json files were created.
+  let txtMkCount = 0; // tracks how many txt files were created.
   files.forEach((file) => {
+    // changes handling depending on if json or txt.
     data =
       file.path === "json" ? JSON.stringify(file.data, null, 2) : file.data;
+    // increments for overall batch file types.
     if (file.path === "json") {
       jsonCount++;
     } else {
@@ -127,23 +137,27 @@ async function createFiles() {
         let msg = `Succesfully created file "${__dirname}\\${file.path}\\${file.name}"`;
         console.log(msg);
         lg.emit("log", "initialize.createFiles()", "INFO", msg);
+        //increments for made file counts.
         if (file.path === "json") {
           jsonMkCount++;
         } else {
           txtMkCount++;
         }
       } catch (error) {
+        // red alert!
         let msg = `Encountered an error writing file "${__dirname}\\${file.path}\\${file.name}": ${error}`;
         console.error(msg);
         lg.emit("log", "init.createFiles()", "ERROR", msg);
       }
     } else {
+      // when file already exists
       let msg = `"${__dirname}\\${file.path}\\${file.name}" already exists.`;
       console.log(msg);
       lg.emit("log", ".init.createFiles()", "INFO", msg);
     }
   });
 
+  // end log messaging for createDirs txt files.
   let countMsg = "";
   if (txtCount === 0) {
     countMsg = "No text files in batch.";
@@ -157,6 +171,7 @@ async function createFiles() {
   console.log(countMsg);
   lg.emit("log", "initialize.createFiles()", "INFO", countMsg);
 
+  // end log messaging for createDirs json files.
   if (jsonCount === 0) {
     countMsg = "No JSON files in batch.";
   } else if (jsonMkCount === 0) {
