@@ -67,13 +67,13 @@ function server() {
             lg.emit("log", path, "INFO", msg);
           } else {
             res.statusCode = 404;
-            res.end("Resource not found");
-            let errorMsg = ``; //update
+            res.end("404: Resource not found");
+            let errorMsg = `404. There was a problem with the request.`;
             console.log(errorMsg);
             lg.emit("log", path, "ERROR", errorMsg);
           }
         } catch (error) {
-          let errorMsg = `There was a problem getting token for client @${clientIP}: ${error}`; //update
+          let errorMsg = `There was a problem getting token for client @${clientIP}: ${error}`;
           console.log(errorMsg);
           lg.emit("log", path, "ERROR", errorMsg);
         }
