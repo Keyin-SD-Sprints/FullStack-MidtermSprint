@@ -1,6 +1,6 @@
 /* 
 File: myApp.js
-Purpose: The main routines to start the initialization app
+Purpose: The top level CLI for the application. Provides access to initialize, config, token, and webServer activation.
 
 Commands:
 see usage.txt file
@@ -11,6 +11,7 @@ Date: 2023/6/19
 global.DEBUG = false;
 
 const fs = require("fs");
+
 const { initializeApp } = require("./initialize.js");
 const { configApp } = require("./config.js");
 const { tokenApp } = require("./token.js");
@@ -20,8 +21,11 @@ const server = require("./webServer.js");
 const lg = new Logger();
 lg.listen();
 
+// CLI args
 const myArgs = process.argv.slice(2);
+// arg for switch
 const myArg = myArgs[0];
+
 if (DEBUG) if (myArgs.length >= 1) console.log("myapp.args:", myArgs);
 
 switch (myArg) {
