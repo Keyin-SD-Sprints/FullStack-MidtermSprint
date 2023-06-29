@@ -3,19 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/css-layout/1.1.1/css-layout.min.js"
-      integrity="sha512-WeFxT4bqnrM1Laaz9RzBX3ttu+vleafd9wICGomR7KUPmaJUf6+Ysu9Zoqm4UyEjgsIArS4JsnHSWrPKOACDgQ=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script> -->
     <link rel="stylesheet" href="/style" />
     <title>The Fitness Studio</title>
   </head>
   <body>
     <header>JavaScript Midterm Sprint</header>
 
-    <!-- <script src="enterUsername.js"></script> -->
     <div id="mainpage">
       <h1>CLI App</h1>
       <br />
@@ -44,21 +37,24 @@
         .addEventListener("submit", processForm);
 
       async function processForm(event) {
-        event.preventDefault();
-        const username = document.getElementById("username").value;
+        // function to handle Submit action.
+        event.preventDefault(); // prevent default action/page reload.
+        const username = document.getElementById("username").value; //get the value entered into the form
         try {
-          const response = await sendUsername(username);
-          const data = await response.json();
-          console.log(data);
-          const token = data.result;
-          const content = document.getElementById("content");
-          content.textContent = `New token: ${token}`;
+          const response = await sendUsername(username); // send request
+          const data = await response.json(); // sets data = the response
+          console.log(data); // logs the data (to the clients browser)
+          const token = data.result; // get the actual token
+          const content = document.getElementById("content"); //get the display element from page
+          content.textContent = `New token: ${token}`; //display the message with the token on the page.
         } catch (error) {
           console.error("Error: " + error);
         }
       }
 
       function sendUsername(username) {
+        // sends request to webserver
+        // create data object key username and value 'username' is the entered info from the form
         const data = { username: username };
 
         return fetch("http://localhost:3000/new-token", {
