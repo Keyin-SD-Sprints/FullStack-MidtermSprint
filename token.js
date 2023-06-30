@@ -60,7 +60,7 @@ function tokenApp() {
       }
       break;
     case "--upd":
-    case "--up":
+    case "--u":
       if (myArgs.length < 5) {
         console.log(
           "Invalid syntax... node myapp token --upd [option] [username] [new value]"
